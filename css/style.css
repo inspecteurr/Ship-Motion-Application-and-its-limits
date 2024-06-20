@@ -1,0 +1,6 @@
+/* Pour les navigateurs WebKit (Chrome, Safari) */
+input[type=range]{
+    accent-color: black;
+    color: #c84a4a;
+}
+

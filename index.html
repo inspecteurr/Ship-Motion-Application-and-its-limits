@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="en">
+    
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Ship Motion Application</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+    <style>
+        input{
+            accent-color: black;
+        }
+        html, body{
+            height: 100%;
+        }
+        body{
+            transform: scale(0.67);
+            transform-origin: center center;
+        }
+        h1{
+            margin-top: -70px;
+            margin-bottom: 50px;
+        }
+        @media screen and (max-width: 767px) {
+            html, body{
+                overflow-x: hidden;
+            }
+            body{
+                margin-left: 20px;
+                transform: scale(1);
+                
+            }
+            h1{
+            margin-top: 10px;
+        }
+        }
+    </style>
+
+    <!-- Page Content -->
+    
+    <!-- Container creates the space -->
+    <div class="container">
+        
+        <!-- Row creates horizontal groups of columns -->
+        <div class="row">
+            
+            <!-- choose horizontal layout in https://www.w3schools.com/bootstrap/bootstrap_grid_examples.asp-->
+            
+            <!-- No divisions in page. Only 1 column. -->
+             <div class="col-md-12 text-center">
+                <h1>Ship Motion Application and its limits</h1>
+                <div align="right">
+                        <p style="width:80%" align="right"> by <strong><a href="https://www.linkedin.com/in/ga%C3%ABl-por%C3%A9e-0ba235221/?originalSubdomain=fr" target="_blank">Gaël Porée</a></strong><br>Engineering school student at SeaTech - Intern at NTNU <br>Supervised by Henrique Murilo Gaspar - April to June 2024</p>
+                    </div>
+                 
+            </div>  
+
+            <div class="row">
+
+                <div class="col-md-6" style="height: 300px;display: flex;justify-content: center;align-items: center;">
+                    <div class="col-md-12 text-center" style="height: 200px;">
+                        <p style="color:black; text-align: justify;">This work is based on <strong><a href="http://www.shiplab.hials.org/app/shipmotion/">the work of Sthefano L. Andrade and Henrique M. Gaspar (2015)</a></strong>. It allows for a graphical representation of estimated motion responses for ships. </br></br>Heave, pitch, roll, vertical motion and vertical acceleration responses are calculated as function of length, breadth, draft, block coefficient, waterline breadth and operational profile. Bending moment is also estimated. Values can be changed by clicking and dragging the sliders. </br></br>The calculations from the article <strong><a href="http://www.sciencedirect.com/science/article/pii/S0029801803001082">Estimation of ship motions using closed-form expressions by Jensen and Mansour (2004)</a></strong> are limited by boundaries which have been highlighted here in red. Beyond these boundaries, the calculation results are no longer accurate.</p>
+                        
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <!--SVG elements -->
+                    <div> <h3 align="center">Wave Incidance Angle </h3>
+                        <div id="rectangle_here" align="center"><svg width="200" height="200">                                                                                                                       <line x1="125" y1="35" x2="125" y2="215" style="stroke:#727272;"></line>                                                                                                                  <line x1="35" y1="125" x2="215" y2="125" style="stroke:#727272;"></line>                                                                                                                  <line x1="125" y1="35" x2="125" y2="215" style="stroke:#727272;" transform="rotate(45,125,125)"></line>                                                                                  <line x1="125" y1="35" x2="125" y2="215" style="stroke:#727272;" transform="rotate(135,125,125)"></line>                                                                              <polyline points="125,55  150,75 150,185 100,185 100,75 " style="stroke:#000000" transform="rotate(90,125,125)"></polyline>                                           <circle cx="125" cy="125" r="90" style="stroke:#000000;stroke-width:3;fill:none"></circle>                                                                                              <polyline points="125,54  140,37 110,37 125,54" style="stroke:#000000;stroke-width:3;fill:none"></polyline>                                                                                      <text x="125" y="30" style="text-anchor: middle">90</text>                                                                                                                  <text x="125" y="235" style="text-anchor: middle"></text>                                                                                                                       <text x="230" y="125" style="text-anchor:middle"></text>                                                                                                                        <text x="25" y="125" style="text-anchor:middle"></text>                                                                                                                                                                                                                        </svg></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 2 divisions in page. 2 column. -->
+            <div class="row">
+                <!--Main Inputs -->
+                <div class="col-md-6">
+
+                    <h2>General Inputs: </h2>
+                    <div>
+                    <p>Length: <span id="length">96</span>
+                    <input type="range" id="slide_length" min="10" value="96" max="300" step="1" oninput="calculate_all()"></p>
+                    <p>Waterline Breadth: <span id="w_breadth">14</span>
+                    <input type="range" id="slide_w_breadth" min="3" value="14" max="40" step="0.2" oninput="calculate_all()"></p>
+                    <p>Block Coefficient: <span id="block">0.60</span>
+                    <input type="range" id="slide_block" min="0.4" value="0.60" max="1" step="0.01" oninput="calculate_all()"></p>
+                    <p>Draft: <span id="draft">2.5</span>
+                    <input type="range" id="slide_draft" min="0" value="2.5" max="20" step="0.1" oninput="calculate_all()"></p>
+                    <p>Speed: <span id="speed">13.5</span>
+                    <input type="range" id="slide_speed" min="0" value="13.5" max="50" step="0.5" oninput="calculate_all()"></p>
+                    <p>Relative Position to CG (%) : <span id="position">0</span>
+                    <input type="range" id="slide_position" min="-100" value="0" max="100" step="1" oninput="calculate_all()"></p>
+                    <p>Heading: <span id="heading">95</span>
+                    <input type="range" id="slide_heading" min="0" value="95" max="360" step="5" oninput="calculate_all()"></p>
+                    <p>Wave Amplitude: <span id="wave_amplitude">1</span>
+                    <input type="range" id="slide_wave_amplitude" min="0" value="1" max="20" step="0.25" oninput="calculate_all()"></p>
+                    </div>
+
+                    <p> Froude Number: <span id="froude">0.587</span></p>
+                </div>
+
+                <div class="col-md-6">
+                    <!--ROLLLLLLLL -->
+                    <h2>Roll Specific Inputs: </h2>
+                    <p>Waterplane Area Coefficient: <span id="Cwp">0.715</span>
+                    <input type="range" id="slide_Cwp" min="0.1" value="0.715" max="1" step="0.005" oninput="calculate_all()"></p>
+                    <p>Transverse Metacentric Height: <span id="GM">4.2</span>
+                    <input type="range" id="slide_GM" min="1" value="4.2" max="50" step="0.1" oninput="calculate_all()"></p>
+                    <p>Roll Natural Period: <span id="Tn">6.5</span>
+                    <input type="range" id="slide_Tn" min="0" value="6.5" max="50" step="0.5" oninput="calculate_all()"></p> <p>Estimated Tn Value = <output id="Tn_guess">5.8</output>    
+                    </p><p>Empirical damping ratio (%): <span id="damping">20</span>
+                    <input type="range" id="slide_damping" min="0" value="20" max="100" step="1" oninput="calculate_all()"></p>
+                    <p>Prismatic Length Ratio: <span id="Delta">0.6</span>
+                    <input type="range" id="slide_delta" min="0.1" value="0.6" max="1" step="0.05" oninput="calculate_all()"></p>
+
+                    <p><button onclick="calculate_all()">Calculate</button> (for old browsers)</p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <h3>Graphics visualization bar</h3>
+               <div class="demo-container" style="height:450px;white-space: nowrap; position:relative;overflow-x:auto;border:solid; padding:20px;display:flex;"> 
+                    <div style="width: 500px;margin-right: 40px;margin-left: 10px;">
+                        <p><div id="graphic1" class="demo-placeholder" style="height:300px" align="left"></div></p>
+                    <p align="left"> GRAPHIC 1 - Vertical motion (m/m) as function of wave frequency. </br>Combined movement from the pitch and heave at the desired location. </p>
+                    </div>
+                    <div style="width: 500px;margin-right: 40px;margin-left: 10px;">
+                        <p><div id="graphic2" class="demo-placeholder" style="height:300px" ></div></p>
+                        <p align="left"> GRAPHIC 2 - Vertical acceleration (m/s<sup>2</sup>) as function of wave frequency.</br>Combined movement from the pitch and heave at the desired location. </br>Deriveted from the Vertical Motion calculated.</p>
+                    </div>
+                    <div style="width: 500px;margin-right: 40px;margin-left: 10px;">
+                        <p><div id="graphic3" class="demo-placeholder" style="height:300px" ></div></p>
+                        <p align="left"> GRAPHIC 3 - Pitch motion is represented in this graphic as a function of wave frequency. </br>Describes vertical motion caused by the pitch movement in meters at the desired location.</p>
+                    </div>
+                    <div style="width: 500px;margin-right: 40px;margin-left: 20px;">
+                        <p><div id="graphic4" class="demo-placeholder" style="height:300px" ></div></p>
+                        <p align="left"> GRAPHIC 4 - Heave motion (m/m) as function of wave frequency. </br>Represents the heave induced vertical motion at the Center of Gravity of the vessel. </p>
+                    </div>
+                    <div style="width: 500px;margin-right: 40px;margin-left: 10px;">
+                        <p><div id="graphic5" class="demo-placeholder" style="height:300px" ></div></p>
+                        <p align="left"> GRAPHIC 5 -  Wave Induced Bending Moment (10<sup>6</sup> N.m) as function of wave frequency. </p>
+                    </div>
+                    <div style="width: 500px;margin-right: 40px;margin-left: 10px;">
+                        <p><div id="graphic11" class="demo-placeholder" style="height:300px" ></div> </p>
+                        <p>GRAPHIC 6 - Roll Motion in degrees as a function of wave frequency</p>
+                    </div>
+                    <div style="width: 500px;margin-right: 40px;margin-left: 10px;">
+                        <p><div id="graphic12" class="demo-placeholder" style="height:300px" ></div> </p>
+                        <p>GRAPHIC 7 - Roll Motion in degrees as a function of wave period</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex;justify-content: center;align-items: center;margin-top: 10px;">
+                <div class="col-md-12 " style=" color:red;text-align: right;">
+                    <p id="error_BT"></p>
+                    <p id="error_Fn"></p>
+                    <p id="error_Cb"></p>
+                    <p id="error_phase"></p>
+                    <p id="error_Delta"></p>
+                </div>
+            </div>
+        
+        </div>
+<br>
+<button onclick="hide()">Click to Read the Explanation</button>
+<br><br><br><br>
+        <div id="hide">
+            
+        
+        <!-- Another horizontal group. Not necessary, but could help in order to separate the columns. -->
+        <div class="row">
+            
+            <div class="col-md-12 text-left">
+                <h2 align="left"> Explaining the Inputs: </h2>
+                <h3 align="left"style="margin-left:5%">General Inputs</h3>
+                <p align="left"><strong>Length (m):</strong> Ship's waterline length.</p>
+                <p align="left"><strong>Waterline Breadth (m):</strong> Ship's maximum breadth at the waterline.</p>
+                <p align="left"><strong>Draft (m):</strong> Distance between the bottom of the vessel and the waterline.</p>
+                <p align="left"><strong>Block Coefficient:</strong> Ratio between the ship's displacement volume and the volume of a prism with dimensions defined by Length, Waterline Breadth and Draft.</p>
+                <p align="left"><strong>Speed (kts):</strong> Speed of the vessel, in knots.</p>
+                <p align="left"><strong> Relative position to CG (%):</strong> Longitudinal position on the vessel where the user wishes to study the motion. Defined as a percentage of the ship length in relation to its center of gravity (in this case considered to be located at <i>L</i>/2). Positive to the fore and negative to the aft.</p>
+                <p align="left"><strong> Heading (degrees):</strong> Direction of the waves in relation to the ship, where at 180 degrees they are head on waves.</p>
+                <p align="left"><strong> Wave Amplitude(m):</strong> Amplitude of the waves.</p>
+                <h3 align="left"style="margin-left:5%">Roll Specific Inputs:</h3>
+                <p align="left"><strong>Waterplane Area Coefficient:</strong> Ratio between the ship's waterplane area at desired draft and its waterline length times waterline breadth.</p>
+                <p align="left"><strong>Transverse Metacentric Height (m):</strong> Distance between the ship's transverse center of gravity and its transverse meta-center.</p>
+                <p align="left"><strong>Roll Natural Period (s):</strong> Natural period of roll of the ship. When unknown by the user, the program suggests a value based on the following rule of thumb: <i>Tn</i> = 0.85*<i>Breadth</i>/<i>GM</i><sup>2</sup></p>
+                <p align="left"><strong>Critical Damping (%):</strong> This parameter is used to take into account the water viscosity. The viscose roll damping is approximately accounted for by adding a percentage of the critical damping to the inviscid wave damping.</p>
+                <p align="left"><strong>Prismatic Length Ratio:</strong> Length ratio of two prismatic bodies that represent the ship. The ship is assumed to consist of two prismatic elements with the same draft, T, but different breadths B0 and B1 and cross-sectional areas A0 and A1. As shown:</p>
+                <p align="left"> <img src="delta.jpg"  class="img-responsive"></p>
+                <p><em>Model of the simplified ship used in roll motion analysis (Jensen and Mansour, 2004)</em></p>
+            </div>      
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12">
+            <h2 align="left"> Commentary: </h2>
+            <p align="left"> The formulation necessary to develop this app was based on the article <strong><a href="http://www.sciencedirect.com/science/article/pii/S0029801803001082">Estimation of ship motions using closed-form expressions by Jensen and Mansour (2004)</a></strong>. A validation of the results, comparing to model tests and linear strip theory are commented in <a herf="http://www.sciencedirect.com/science/article/pii/S0029801803001082">the paper</a>.
+
+            <br><img src="http://ars.els-cdn.com/content/image/1-s2.0-S0029801803001082-gr3.gif" class="img-responsive">
+            <p><em>Example of theory validation for vertical acceleration ((m/s2)/m) at forward perpendicular as function of wave frequency for different headings, <a herf="http://www.sciencedirect.com/science/article/pii/S0029801803001082">by Jensen and Mansour (2004)</a>.</p></em>
+
+            The method is based on the wave  response of a box shaped vessel with Length, Breadth and Draft as main dimensions. The responses are calculated for different wave frequencies and then plotted. To account for the hull shape in a real vessel, the waterline breadth, <i>B<sub>0</sub></i>, is multiplied by the Block Coefficient, <i>C<sub>b</sub></i> and the result, <i>B</i>, is used as the input for the Beam, as shown below:</p> 
+            <p align="center"><i>B</i> = <i>B<sub>0</sub></i><i>C<sub>b</sub></i>
+            <p align="left">The article explains the motivation and the value of this approach: <BR>
+            <blockquote><em>In the design of ships, the wave-induced motions and accelerations are important to the assessment of the comfort of the crew and the passengers and to the scantlings
+            of securing devices like lashing for container stacks. Usually, the design values are taken from the classification society rules where explicit formulas are given. However, since the formulas do not depend on the operational profile the naval architect cannot assess the influence of e.g. a weather routing system or speed reduction in heavy sea.<BR>
+            Direct calculation of the maximum wave-induced motions and accelerations a ship may encounter during its operational lifetime can be performed by taking into account the hull form, the mass distribution and the operational profile. A linear analysis is fairly straightforward using either two- or three-dimensional hydrodynamic procedures based on potential theory. However, such direct calculation procedures are not very useful in the conceptual design phase, because of lack of detailed data for the ship and because significant expertise and time are required to do the calculations.</blockquote></em> </p>
+            <p align="left"> The benefit of such simplified methodology comes from the fact that it efficiently allows the operational profile of a vessel to be used as initial parameter for the ship motion analysis at conceptual phase with reliable results. The method, however, has a few accuracy limitations and simplifications, which are listed as:
+            <ul>
+            <li align="left">Heave response is smaller than reality when &#955;/L > 1 (wave longer than the ship's length);</li>
+            <li align="left">Pitch response is larger than reality around &#955;/L = 1 for Froude numbers larger than 0.2;</li>
+            <li align="left">The simplified formulas predict zero pitch in beam sea (90 degrees); </li>
+            <li align="left">Pitch and heave movements are considered to have a phase difference of 90 degrees; </li>
+            <li align="left">The theory assumes very deep water waves;</li>
+            <li align="left">For the Bending Moment Calculation the minimum Cb allowed is 0.6</li>
+            </ul> </p>
+            <p align="left"> The app is coded in javascript and runs in a web based environment, allowing for a real time visualization of the results in different browsers and systems.</p>
+            
+                  
+            
+        
+        </div>
+        </div>
+
+                                <!--Graphics Explained-->
+        <div class="row">
+            
+            <div class="col-md-12">
+                <h2 align="left"> Preliminary Graphics' Explanantion </h2>
+            </div>
+            
+            <div class="col-md-6">
+                <div id="graphic6" class="demo-placeholder" style="height:330px" align="left"></div>
+            </div>
+            <div class="col-md-6">
+                <p> GRAPHIC 1 - Vertical motion (m/m) as function of wave frequency. This motion takes into consideration the combined movement from the pitch and heave at the desired location.</p>       
+                <li>Length: Bigger length means reduced vertical motion;</li>
+                <li>Breadth: Bigger breadth means reduced vertical motion;</li>
+                <li>Cb: Bigger block coefficient means reduced vertical motion;</li>
+                <li>Draft: Increasing the draft value also increases the maximum vertical motion value and it occurs at a lower wave frequencies;</li>
+                <li>Speed: It affects the wave encounter frequency, which also affects the intensity of the motion. Higher speed translates into bigger motion;</li>
+                <li>Relative Position: It affects the movement caused by pitch, thus having  bigger vertical motion;</li>
+                <li>Heading: It influences the wave frequency at which the maximum vertical motion values occur.</li>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div id="graphic7" class="demo-placeholder" style="height:350px" align="left"></div>
+            </div>
+            <div class="col-md-6">
+                <p> GRAPHIC 2 - Vertical acceleration (m/s<SUP>2</SUP>) as function of wave frequency. This motion takes into consideration the combined movement from the pitch and heave at the desired location. It is deriveted from the Vertical Motion calculated.</p>
+                <li>Length: Bigger length means reduced vertical acceleration;</li>
+                <li>Breadth: Increasing the breadth decreases the vertical acceleration to a point and then it increases again;</li>
+                <li>Cb: Increasing the block coefficient decreases the vertical acceleration to a point and then it increases again;</li>
+                <li>Draft: Increasing the draft decreases the vertical acceleration to a point, then the maximum value becomes constant, but the wave frequency at which it occurs starts to have higher values;</li>
+                <li>Speed: It affects the wave encounter frequency, which also affects the intensity of the vertical acceleration. Higher speed translates into bigger acceleration;</li>
+                <li>Relative Position: Bigger vertical acceleration happens at extremes;</li>
+                <li>Heading: It influences to the vertical acceleration varies greatly.</li>
+            </div>
+        </div>  
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div id="graphic8" class="demo-placeholder" style="height:370px" align="left"></div>
+            </div>
+            <div class="col-md-6">
+                <p> GRAPHIC 3 - Pitch motion divided by the wave number (k) is represented in this graphic as a function of wave frequency. It describes vertical motion caused by the pitch movement in meters at the desired location.</p>
+                <li>Length: Increasing the length increases the pitch motion to a point, then it decreases and become stable. However, the changes also affect when the resonance frequency occurs;</li>
+                <li>Breadth: Bigger breadth means increased pitch motion values;</li>
+                <li>Cb: Changes in the block coefficient causes the pitch motion intensity to decrease and increase again (Unrealistic values when Cb ranges from 0.75 to 0.85 at L/B = 96/40);</li>
+                <li>Draft: Increasing the draft value also increases the maximum pitch motion value and it occurs at a lower wave frequencies;</li>
+                <li>Speed: It affects the wave encounter frequency, which also affects the intensity of the pitch motion. Higher speed translates into bigger motion;</li>
+                <li>Relative Position: It peaks the vertical motion due to pitch at the extremes and is 0 at the Center of Gravity;</li>
+                <li>Heading: It varies a lot, with no pitch motion at 270 and 90 degrees (side waves).</li>
+            </div>
+        </div>  
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div id="graphic9" class="demo-placeholder" style="height:330px" align="left"></div>
+            </div>
+            <div class="col-md-6">
+                <p> GRAPHIC 4 - Heave motion (m/m) as function of wave frequency. It represents the heave induced vertical motion at the Center of Gravity of the vessel.  </p>
+                <li>Length: Bigger length means reduced heave motion;</li>
+                <li>Breadth: Bigger breadth means reduced heave motion. Changing it might create a resonance spike  (depends on the other parameters combination);</li>
+                <li>Cb: Block Coefficient variances do not affect the heave motion in this formulation;</li>
+                <li>Draft: Increasing the draft value also increases the maximum heave motion value and it occurs at a lower wave frequencies;</li>
+                <li>Speed: It affects the wave encounter frequency, which also affects the intensity of the heave motion. Higher speed translates into bigger motion;</li>
+                <li>Relative Position: Changes have no effect, since the heave motion is constant on the whole vessel length;</li>
+                <li>Heading: It influences the wave frequency at which the maximum heave motion values occur.</li>
+            </div>
+        </div>  
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div id="graphic10" class="demo-placeholder" style="height:300px" align="left"></div>
+            </div>
+            <div class="col-md-6">
+                <p> GRAPHIC 5 -  Wave Induced Bending Moment (10<sup>6</sup> N.m) as function of wave frequency. </p>
+                <li>Length: Bigger length means increased wave induced bending moment;</li>
+                <li>Breadth: Bigger breadth means increased wave induced bending moment;</li>
+                <li>Cb: Bigger block coefficient means increased wave induced bending moment;</li>
+                <li>Draft: Bigger draft means reduced wave induced bending moment;</li>
+                <li>Speed: Higher speed means increased wave induced bending moment;</li>
+                <li>Relative Position: Does not affect the formulation for wave induced bending moment. The maximum moment occurs at midship in ships;</li>
+                <li>Heading: The effect of changes in heading varies a lot.</li>
+            </div>
+        </div>  
+    </div>
+        
+
+    </div>
+    <!-- /.container -->
+
+    
+    <!-- Insert own scripts here -->  
+	<!--Script for using flot graphics -->
+	
+	<script language="javascript" type="text/javascript" src="jquery-1.11.3.min.js"></script>
+	<script language="javascript" type="text/javascript" src="flot/jquery.flot.min.js"></script>
+	
+	<!--Java script CORE -->
+		
+	<script>
+	
+	//Vector declaration before the main function -- They are used to calculate the properties//
+			var wave_freq = [];
+			var Vertical_Movement=[];
+			var Vertical_Acceleration=[];
+			var Pitch_Movement=[];
+			var Heave_Movement=[];
+            var Bending_Moment=[];
+            var Roll_Movement=[];
+            var wave_period=[];
+			
+		calculate_all();
+			
+	//Main Function that will run each time one slider  is changed//					
+		function calculate_all(){
+		
+		//Vector declaration in the the main function -- They receive the properties and are used to plot the curves//
+			var Results_array1=[];
+			var Results_array2=[];
+			var Results_array3=[];
+			var Results_array4=[];
+            var Results_array5=[]; 
+            var Results_array6=[];
+            var Results_array7=[];
+			
+		
+		//Receives and changes the values from the Input sliders//	
+			Length = document.getElementById("slide_length").value;
+			document.getElementById("length").innerHTML = Length;
+			W_Breadth = document.getElementById("slide_w_breadth").value;
+			document.getElementById("w_breadth").innerHTML = W_Breadth;
+			Block = document.getElementById("slide_block").value;
+			document.getElementById("block").innerHTML = Block;
+			Draft = document.getElementById("slide_draft").value;
+			document.getElementById("draft").innerHTML = Draft;
+			Speed = document.getElementById("slide_speed").value;
+			document.getElementById("speed").innerHTML = Speed;
+			Heading = document.getElementById("slide_heading").value;
+			document.getElementById("heading").innerHTML = Heading;
+			Position = document.getElementById("slide_position").value;
+			document.getElementById("position").innerHTML = Position;
+            Wave_Amplitude = document.getElementById("slide_wave_amplitude").value;
+			document.getElementById("wave_amplitude").innerHTML = Wave_Amplitude;
+
+            // Change the color if the value is outsite the range 
+            const id_Length = document.getElementById('slide_length');
+            const id_W_Breadth = document.getElementById('slide_w_breadth');
+            const id_Block = document.getElementById('slide_block');
+            const id_Draft = document.getElementById('slide_draft');
+            const id_Speed = document.getElementById('slide_speed');
+            const id_Heading = document.getElementById('slide_heading');
+            const error_Fn = document.getElementById('error_Fn');
+            const error_BT = document.getElementById('error_BT');
+            const error_Cb = document.getElementById('error_Cb');
+            const error_phase = document.getElementById('error_phase');
+
+            if((W_Breadth/Draft<1) || (W_Breadth/Draft>6)){
+                id_W_Breadth.setAttribute('style', 'accent-color: red;');
+                id_Draft.setAttribute('style', 'accent-color: red;');
+                if(W_Breadth/Draft<1){
+                    error_BT.textContent = 'B/T is too low';
+                }
+                else{
+                    error_BT.textContent = 'B/T is too higth';
+                }
+            }
+            else{
+                id_W_Breadth.setAttribute('style', 'accent-color: black;');
+                id_Draft.setAttribute('style', 'accent-color: black;');
+                error_BT.textContent = '';
+            }
+            if(Heading==90){
+                id_Heading.setAttribute('style', 'accent-color: red;');
+                error_phase.textContent = 'The simplified formulas predict zero pitch in beam sea (90 degrees)';
+            }
+            else{
+                id_Heading.setAttribute('style', 'accent-color: black;');
+                error_phase.textContent = '';
+            }
+            if(Block<0.6){
+                id_Block.setAttribute('style', 'accent-color: red;');
+                error_Cb.textContent = 'For the Bending Moment Calculation the minimum Cb allowed is 0.6';
+            }
+            else{
+                id_Block.setAttribute('style', 'accent-color: black;');
+                error_Cb.textContent = '';
+            }
+           
+			
+			//This SVG element visually shows the relative position of the ship to the waves //
+			
+			svg_element = '<svg width="250" height="250" >                                                                                                                       <line x1="125"  y1="35" x2="125"   y2="215" style="stroke:#727272;"/>                                                                                                                  <line x1="35"  y1="125" x2="215"   y2="125" style="stroke:#727272;"/>                                                                                                                  <line x1="125"  y1="35" x2="125"   y2="215" style="stroke:#727272;" transform="rotate(45,125,125)"/>                                                                                  <line x1="125"  y1="35" x2="125"   y2="215" style="stroke:#727272;" transform="rotate(135,125,125)"/>                                                                              <polyline points="125,55  150,75 150,185 100,185 100,75 " style="stroke:#000000" transform="rotate('+ (180 - Heading) +',125,125)" />                                           <circle cx="125" cy="125" r="90" style="stroke:#000000;stroke-width:3;fill:none"/>                                                                                              <polyline points="125,54  140,37 110,37 125,54" style="stroke:#000000;stroke-width:3;fill:none"/>                                                                                      <text x="125"  y="30" style="text-anchor: middle">'+Heading+'</text>                                                                                                                  <text x="125"  y="235" style="text-anchor: middle"></text>                                                                                                                       <text x="230"  y="125" style="text-anchor:middle"></text>                                                                                                                        <text x="25"  y="125" style="text-anchor:middle"></text>                                                                                                                                                                                                                        </svg>'
+            
+			document.getElementById("rectangle_here").innerHTML = svg_element;
+			
+			//These constants and variables are prepared to be used inside the "for()" that calculates the vessels motion responses //
+			
+            g=9.81;
+			heading=Heading;
+			betha=heading*Math.PI/180;
+			
+			Breadth = W_Breadth*Block;
+			Speed_metric=Speed*0.5144444;
+			Froude_N=Speed_metric/Math.sqrt((g*Length));
+			position=Length*Position/200;
+			
+            document.getElementById("froude").innerHTML = Math.round(Froude_N*1000)/1000;
+
+            if(Froude_N>=0.3){
+                id_Length.setAttribute('style', 'accent-color: red;');
+                id_Speed.setAttribute('style', 'accent-color: red;');
+                error_Fn.textContent = 'Bending moment has been validated for Fn < 0.3 only';
+            }
+            else{
+                id_Length.setAttribute('style', 'accent-color: black;');
+                id_Speed.setAttribute('style', 'accent-color: black;');
+                error_Fn.textContent = '';
+            }
+
+			//This "for()" calculates the vessel responses to different waves frequencies//
+						
+			for (i = 0; i <= 1000; i++)
+			{
+			wave_freq[i]=0.05+1.95*i/1000;
+			wave_number=Math.pow(wave_freq[i],2)/g;
+			eff_wave_number=Math.abs(wave_number*Math.cos(betha));
+			smith_factor=Math.exp(-wave_number*Draft);
+			alpha=1-Froude_N*Math.sqrt(wave_number*Length)*Math.cos(betha);
+			sectional_hydro_damping=2*Math.sin(0.5*wave_number*Breadth*Math.pow(alpha,2))
+				*Math.exp(-wave_number*Draft*Math.pow(alpha,2));
+			a=Math.pow(1-wave_number*Draft,2);
+			b=Math.pow((Math.pow(sectional_hydro_damping,2)/(wave_number*Breadth*Math.pow(alpha,3))),2);
+			f=Math.sqrt(a+b);
+			F=smith_factor*f*(2/(eff_wave_number*Length))*Math.sin(eff_wave_number*Length/2);
+			G=smith_factor*f*(24/(Math.pow(eff_wave_number*Length,2)*Length))*
+				(Math.sin(eff_wave_number*Length/2)-(eff_wave_number*Length/2)*
+				Math.cos(eff_wave_number*Length/2));
+			eta=1/(Math.sqrt(Math.pow((1-2*wave_number*Draft*Math.pow(alpha,2)),2)+
+				Math.pow(Math.pow(sectional_hydro_damping,2)/
+				(wave_number*Breadth*Math.pow(alpha,2)),2)));
+			FRF_Heave=Wave_Amplitude*eta* F;
+			FRF_Pitch=Wave_Amplitude*eta* G;
+			
+			Vertical_Movement[i]=Math.sqrt(Math.pow(FRF_Heave,2) + Math.pow(FRF_Pitch,2)*Math.pow(position,2));
+			Vertical_Acceleration[i]=Math.pow(alpha,2)*wave_number*g*Vertical_Movement[i];
+			Pitch_Movement[i]=Math.sqrt(Math.pow(FRF_Pitch,2)*Math.pow(position,2));
+			Heave_Movement[i]=Math.abs(FRF_Heave);
+                
+                //Bending Moment Response//
+                
+            Cb=Math.max(0.6,Block);    
+            phi=2.5*(1-Cb);    
+            F_Cb=(Math.pow(1-phi,2)+0.6*alpha*(2-phi));  
+                
+            F_v=1+3*Math.pow(Froude_N,2);    
+                
+            Bending_Moment[i]=Wave_Amplitude*(smith_factor*((1-wave_number*Draft)/(Math.pow(Length*eff_wave_number,2)))*(1-Math.cos(eff_wave_number*Length/2)-(eff_wave_number*Length/4)*Math.sin(eff_wave_number*Length/2))*F_v*F_Cb*Math.pow(Math.abs(Math.cos(betha)),1/3))*1025*g*W_Breadth*Length*Length/1000000;
+             
+			}
+            
+             ////// ROLL /////
+        
+            Cwp = document.getElementById("slide_Cwp").value;
+            document.getElementById("Cwp").innerHTML = Cwp; 
+            GM = document.getElementById("slide_GM").value;
+            document.getElementById("GM").innerHTML = GM; 
+            natural_period = document.getElementById("slide_Tn").value;
+            document.getElementById("Tn").innerHTML = natural_period; 
+            critical_damping_percentage = document.getElementById("slide_damping").value;
+            document.getElementById("damping").innerHTML = critical_damping_percentage;
+            delta = parseFloat(document.getElementById("slide_delta").value );
+            document.getElementById("Delta").innerHTML = delta; 
+
+            if(Cwp<delta){
+                slide_Cwp.setAttribute('style', 'accent-color: red;');
+                slide_delta.setAttribute('style', 'accent-color: red;');
+                error_Delta.textContent = 'Prismatic Length Ratio cannot be greater than Waterplane Area Coefficient';
+            }
+            else{
+                slide_delta.setAttribute('style', 'accent-color: black;');
+                slide_Cwp.setAttribute('style', 'accent-color: black;');
+                error_Delta.textContent = '';
+            }
+            
+  //      Cwp = 0.713;   
+        critical_damping_percentage = critical_damping_percentage/100;
+ //       natural_period = 6.3;
+ //       GM=4.19;
+        
+        //roll_hydro_damping = 1;
+        //excitation_frequency=10000000;
+            
+        B_0 = W_Breadth;    
+        Cb=Block;
+        document.getElementById("Tn_guess").innerHTML = Math.round(0.85*W_Breadth*10/Math.sqrt(GM))/10;    
+        restoring_moment_coeff = g*1025*Cb*Length*W_Breadth*Draft*GM;    
+            
+            for (i = 0; i <= 1000; i++){
+                
+                wave_freq[i]=0.05+1.95*i/1000;
+                wave_period[i]=2*3.14159/wave_freq[i];
+                wave_number=Math.pow(wave_freq[i],2)/g;
+ 
+                alpha=1-Froude_N*Math.sqrt(wave_number*Length)*Math.cos(betha);
+                encounter_frequency =  wave_freq[i]*alpha;           
+                eff_wave_number=Math.abs(wave_number*Math.cos(betha));
+                
+                breadth_ratio =  (Cwp - delta)/(1 - delta);
+                B_1 = breadth_ratio*B_0;
+                A_0 = Cb*B_0*Draft/(delta+breadth_ratio*(1-delta));
+                A_1 = breadth_ratio*A_0;
+                
+                //sectional damping coefficient//
+                Breadth_Draft_ratio = B_0/Draft;                                
+                    //3 <= B/T <= 6//
+                if (Breadth_Draft_ratio>3){
+                    a0=0.256*Breadth_Draft_ratio - 0.286;
+                    b0=-0.11*Breadth_Draft_ratio - 2.55;
+                    d0=0.033*Breadth_Draft_ratio - 1.419;
+                }
+                
+                    //1 <= B/T <= 3//
+                else {
+                    a0=-3.94*Breadth_Draft_ratio + 13.69;
+                    b0=-2.12*Breadth_Draft_ratio - 1.89;
+                    d0=1.16*Breadth_Draft_ratio-7.97;
+                }
+                
+                Breadth_Draft_ratio = B_1/Draft;                                
+                    //3 <= B/T <= 6//
+                if (Breadth_Draft_ratio>3){
+                    a1=0.256*Breadth_Draft_ratio - 0.286; 
+                    b1=-0.11*Breadth_Draft_ratio - 2.55;
+                    d1=0.033*Breadth_Draft_ratio - 1.419;
+                }
+                
+                    //1 <= B/T <= 3//
+                else {
+                    a1=-3.94*Breadth_Draft_ratio + 13.69;
+                    b1=-2.12*Breadth_Draft_ratio - 1.89;
+                    d1=1.16*Breadth_Draft_ratio-7.97;
+                }
+               
+               // console.log(B_0/Draft,B_1/Draft)
+                //console.log(a0,a1)
+                //B_44 - hydro damping coeff//
+                b_44_0 = (1025*A_0*B_0*B_0*a0*Math.exp(b0*Math.pow(encounter_frequency,-1.3))*Math.pow(encounter_frequency,d0)/(Math.sqrt(B_0/(2*g))));
+                b_44_1 = (1025*A_1*B_1*B_1*a1*Math.exp(b1*Math.pow(encounter_frequency,-1.3))*Math.pow(encounter_frequency,d1)/(Math.sqrt(B_1/(2*g))));
+                
+                damping_ratio=Math.sqrt(b_44_1/b_44_0);
+                
+                b_44 = Length*b_44_0*(delta + b_44_1*(1-delta)/b_44_0);
+                //total damping = hydro damping + additional damping//
+                
+                add_damping = restoring_moment_coeff*natural_period/Math.PI;
+                
+                roll_hydro_damping= b_44 + add_damping*critical_damping_percentage;
+                
+                //excitation frequency//
+                if (heading == 90  || heading ==270){
+                excitation_frequency=Math.sqrt(1025*g*g*b_44_0/encounter_frequency)*(delta+damping_ratio*(1-delta))*Length
+             
+                }
+               else{  
+                A=Math.abs(Math.sin(betha))*Math.sqrt(1025*g*g/encounter_frequency)*Math.sqrt(b_44_0)*2/eff_wave_number;
+                B=Math.pow(Math.sin(0.5*delta*Length*eff_wave_number),2);
+                C=Math.pow(damping_ratio*Math.sin(0.5*(1-delta)*Length*eff_wave_number),2);
+                D=2*damping_ratio*Math.sin(0.5*delta*Length*eff_wave_number)*Math.sin(0.5*(1-delta)*Length*eff_wave_number)*Math.cos(0.5*Length*eff_wave_number);
+               
+                excitation_frequency=A*Math.sqrt(B+C+D)
+               }
+                
+           //  excitation_frequency=Math.sqrt(1025*g*g*b_44_0/encounter_frequency)*(delta+damping_ratio*(1-delta))*Length; 
+                //main formula//
+                          
+                A = Math.pow(-Math.pow(encounter_frequency*natural_period/(2*3.14159),2)+1,2);
+                B = Math.pow(restoring_moment_coeff,2); 
+                C = Math.pow(encounter_frequency*roll_hydro_damping,2); 
+                
+            
+               Roll_Movement[i] = Wave_Amplitude*excitation_frequency/(Math.sqrt(A*B+C));
+              //Roll_Movement[i] = Wave_Amplitude*excitation_frequency
+             // Roll_Movement[i] = Wave_Amplitude*excitation_frequency/(Math.sqrt(A*B+C));
+                
+            }
+			
+			//This "for()" receives the results from the motion vectors and prepare the graphics//
+			
+			for (i = 0; i <= 1000; i++) 
+			{
+			Results_array1.push([wave_freq[i],Vertical_Movement[i]]);
+			Results_array2.push([wave_freq[i],Vertical_Acceleration[i]]);
+			Results_array3.push([wave_freq[i],Pitch_Movement[i]]);
+			Results_array4.push([wave_freq[i],Heave_Movement[i]]);
+            Results_array5.push([wave_freq[i],Bending_Moment[i]]);
+            Results_array6.push([wave_freq[i],Roll_Movement[i]*180/Math.PI]);
+            Results_array7.push([wave_period[i],Roll_Movement[i]*180/Math.PI]);
+                
+			}
+            
+            W_Breadth = document.getElementById("slide_w_breadth").value;
+            Draft = document.getElementById("slide_draft").value;
+            B_T = W_Breadth/Draft;
+
+			if(B_T<1 || B_T>6 || Cwp<delta){
+                $.plot("#graphic11",[{label: "Roll (degrees) x &#969; (rad/s)",        data: Results_array6 , color: "red"}],{series:{lines:{show:true}},yaxis:{ticks:10,min:0.5,tickDecimals:2},xaxis:{ticks:5,max:2},grid:{backgroundColor:{colors:["#fff","#c84a4a"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});
+                $.plot("#graphic12",[{label: "Roll (degrees) x T; (s)",        data: Results_array7 , color: "red"}],{series:{lines:{show:true}},yaxis:{ticks:10,min:0.5,tickDecimals:2},xaxis:{ticks:15,max:30},grid:{backgroundColor:{colors:["#fff","#c84a4a"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});
+            }
+            else{
+                $.plot("#graphic11",[{label: "Roll (degrees) x &#969; (rad/s)",        data: Results_array6 }],{series:{lines:{show:true}},yaxis:{ticks:10,min:0.5,tickDecimals:2},xaxis:{ticks:5,max:2},grid:{backgroundColor:{colors:["#fff","#eee"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});
+                $.plot("#graphic12",[{label: "Roll (degrees) x T; (s)",        data: Results_array7 }],{series:{lines:{show:true}},yaxis:{ticks:10,min:0.5,tickDecimals:2},xaxis:{ticks:15,max:30},grid:{backgroundColor:{colors:["#fff","#eee"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});
+            }
+            if(Heading==90){
+			$.plot("#graphic1",[{label: "Vertical Movement (m/m) x &#969; (rad/s)",     data: Results_array1, color: "red"}],{series:{lines:{show:true}},yaxis:{ticks:10,tickDecimals:3},grid:{backgroundColor:{colors:["#fff","#c84a4a"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});
+            }
+            else{
+                $.plot("#graphic1",[{label: "Vertical Movement (m/m) x &#969; (rad/s)",     data: Results_array1}],{series:{lines:{show:true}},yaxis:{ticks:10,tickDecimals:3},grid:{backgroundColor:{colors:["#fff","#eee"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});  
+            }
+            if(Heading==90){
+                $.plot("#graphic2",[{label: "Vertical Acceleration (m/s<SUP>2</SUP>) x &#969; (rad/s)", data: Results_array2, color: "red" }],{series:{lines:{show:true}},yaxis:{ticks:10,tickDecimals:3},grid:{backgroundColor:{colors:["#fff","#c84a4a"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});
+            }
+            else{
+                $.plot("#graphic2",[{label: "Vertical Acceleration (m/s<SUP>2</SUP>) x &#969; (rad/s)", data: Results_array2 }],{series:{lines:{show:true}},yaxis:{ticks:10,tickDecimals:3},grid:{backgroundColor:{colors:["#fff","#eee"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});  
+            }
+            if(Heading==90){
+                $.plot("#graphic3",[{label: "Pitch motion/k (m/m) x &#969; (rad/s)",        data: Results_array3 , color: "red" }],{series:{lines:{show:true}},yaxis:{ticks:10,tickDecimals:3},grid:{backgroundColor:{colors:["#fff","#c84a4a"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});
+            }
+            else{
+                $.plot("#graphic3",[{label: "Pitch motion/k (m/m) x &#969; (rad/s)",        data: Results_array3 }],{series:{lines:{show:true}},yaxis:{ticks:10,tickDecimals:3},grid:{backgroundColor:{colors:["#fff","#eee"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});  
+            }
+            $.plot("#graphic4",[{label: "Heave motion (m/m) x &#969; (rad/s)",        data: Results_array4 }],{series:{lines:{show:true}},yaxis:{ticks:10,tickDecimals:3},grid:{backgroundColor:{colors:["#fff","#eee"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});
+            if(Block<0.6 || Froude_N>=0.3){
+                $.plot("#graphic5",[{label: "Bending Moment (N.m 10e6) x &#969; (rad/s)",        data: Results_array5 , color: "red"}],{series:{lines:{show:true}},yaxis:{ticks:10,tickDecimals:3},grid:{backgroundColor:{colors:["#fff","#c84a4a"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});
+            }
+            else {
+                $.plot("#graphic5",[{label: "Bending Moment (N.m 10e6) x &#969; (rad/s)",        data: Results_array5 }],{series:{lines:{show:true}},yaxis:{ticks:10,tickDecimals:3},grid:{backgroundColor:{colors:["#fff","#eee"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}}); 
+            }
+            if(Heading==90){    
+                $.plot("#graphic6",[{label: "Vertical Movement (m/m) x &#969; (rad/s)",     data: Results_array1 , color: "red"}],{series:{lines:{show:true}},yaxis:{ticks:10,tickDecimals:3},grid:{backgroundColor:{colors:["#fff","#c84a4a"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});
+            }
+            else{
+                $.plot("#graphic6",[{label: "Vertical Movement (m/m) x &#969; (rad/s)",     data: Results_array1 }],{series:{lines:{show:true}},yaxis:{ticks:10,tickDecimals:3},grid:{backgroundColor:{colors:["#fff","#eee"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});
+            }
+            if(Heading==90){
+                $.plot("#graphic7",[{label: "Vertical Acceleration (m/s<SUP>2</SUP>) x &#969; (rad/s)", data: Results_array2 , color: "red"}],{series:{lines:{show:true}},yaxis:{ticks:10,tickDecimals:3},grid:{backgroundColor:{colors:["#fff","#c84a4a"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}}); 
+            }
+            else{
+                $.plot("#graphic7",[{label: "Vertical Acceleration (m/s<SUP>2</SUP>) x &#969; (rad/s)", data: Results_array2 }],{series:{lines:{show:true}},yaxis:{ticks:10,tickDecimals:3},grid:{backgroundColor:{colors:["#fff","#eee"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});
+            }
+            if(Heading==90){
+                $.plot("#graphic8",[{label: "Pitch motion/k (m/m) x &#969; (rad/s)",        data: Results_array3 , color: "red"}],{series:{lines:{show:true}},yaxis:{ticks:10,tickDecimals:3},grid:{backgroundColor:{colors:["#fff","#c84a4a"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});
+            }
+            else{
+                $.plot("#graphic8",[{label: "Pitch motion/k (m/m) x &#969; (rad/s)",        data: Results_array3 }],{series:{lines:{show:true}},yaxis:{ticks:10,tickDecimals:3},grid:{backgroundColor:{colors:["#fff","#eee"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});
+            }
+            $.plot("#graphic9",[{label: "Heave motion (m/m) x &#969; (rad/s)",        data: Results_array4 }],{series:{lines:{show:true}},yaxis:{ticks:10,tickDecimals:3},grid:{backgroundColor:{colors:["#fff","#eee"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});
+            if(Block<0.6|| Froude_N>=0.3)
+            {
+                $.plot("#graphic10",[{label: "Bending Moment (N.m x 10e6) x &#969; (rad/s)",        data: Results_array5 , color: "red"}],{series:{lines:{show:true}},yaxis:{ticks:10,tickDecimals:3},grid:{backgroundColor:{colors:["#fff","#c84a4a"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});
+            }
+            else{
+                $.plot("#graphic10",[{label: "Bending Moment (N.m x 10e6) x &#969; (rad/s)",        data: Results_array5 }],{series:{lines:{show:true}},yaxis:{ticks:10,tickDecimals:3},grid:{backgroundColor:{colors:["#fff","#eee"]},borderWidth:{top: 1,right: 1,bottom: 2,left: 2}}});
+            }
+            
+            
+            
+            
+        }
+
+
+        function hide() {
+            var div = document.getElementById('hide');
+            if (div.style.display == 'none') {
+                div.style.display="";
+            }
+            else {
+                div.style.display = 'none';
+            }
+        }
+        document.onload = hide()
+		
+	</script>
+
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+
+
+</body></html>
